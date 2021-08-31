@@ -11,11 +11,9 @@
 '              **Calculations accomplished by utilizing a series of nested For loops to move through 
 '                the years, months and days. Within and containing these For loops are a series of If loops 
 '                to handle particular situations regarding date mechanics. (Birth Year = Current Year, etc.)
-'                Leap years are also handled within If scenarios under Month For Loops to add one day's worth
-'                of exercise to the total once every 4th February.**
 
 '                ***Though unnecessary to the assignment parameters, I went ahead and caught various potential 
-'                   errors from user input. These include non-integer input in the date boxes, out of range 
+'                   errors from user input as well. These include non-integer input in the date boxes, out of range 
 '                   integers in date boxes, incomplete form boxes, and negative dates.***
 
 Public Class frmLifetimeExercise
@@ -39,6 +37,15 @@ Public Class frmLifetimeExercise
         'Name Instantiation'
         strNameInput = txtName.Text
 
+        'Birth Year Instantiation'
+        If IsNumeric(txtBirthYYYY.Text) Then
+            intBirthYear = txtBirthYYYY.Text
+        Else
+            MessageBox.Show("Integers Only.", "Invalid Entry",
+                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            Exit Sub
+        End If
+
         'Birth Month Instantiation'
         If IsNumeric(txtBirthMM.Text) Then
             If txtBirthMM.Text <= 12 AndAlso txtBirthMM.Text > 0 Then
@@ -54,27 +61,18 @@ Public Class frmLifetimeExercise
             Exit Sub
         End If
 
-        'Birth Year Instantiation'
-        If IsNumeric(txtBirthYYYY.Text) Then
-            intBirthYear = txtBirthYYYY.Text
-        Else
-            MessageBox.Show("Integers Only.", "Invalid Entry",
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-            Exit Sub
-        End If
-
         'Birth Date Instantiation'
         If IsNumeric(txtBirthDD.Text) Then
             If txtBirthDD.Text <= intMonthDays(intBirthMonth - 1) AndAlso txtBirthDD.Text > 0 Then
                 intBirthDate = txtBirthDD.Text
             Else
                 MessageBox.Show("Date Entered Is Invalid", "Invalid Entry",
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                 Exit Sub
             End If
         Else
             MessageBox.Show("Integers (1-" & intMonthDays(intBirthMonth - 1) & ") Only.", "Invalid Entry",
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
         End If
 
@@ -158,9 +156,6 @@ Public Class frmLifetimeExercise
             If year = intBirthYear Then
                 If intBirthYear = intCurrentYear Then
                     For month As Integer = intBirthMonth To intCurrentMonth
-                        If year Mod 4 = 0 AndAlso month = 2 Then
-                            decHoursExercised += _cdecHoursPerDay
-                        End If
                         If month = intBirthMonth Then
                             For day As Integer = intBirthDate To intCurrentDate
                                 decHoursExercised += _cdecHoursPerDay
@@ -171,7 +166,7 @@ Public Class frmLifetimeExercise
                         Else
                             For day As Integer = 1 To intMonthDays(month - 1)
                                 decHoursExercised += _cdecHoursPerDay
-                                If day = intMonthDays(month - 1) Then
+                                If day = intMonthDays(month - 1) - 1 Then
                                     Exit For
                                 End If
                             Next
@@ -179,9 +174,6 @@ Public Class frmLifetimeExercise
                     Next
                 Else
                     For month As Integer = intBirthMonth To 12
-                        If year Mod 4 = 0 AndAlso month = 2 Then
-                            decHoursExercised += _cdecHoursPerDay
-                        End If
                         If month = intBirthMonth Then
                             For day As Integer = intBirthDate To intMonthDays(month - 1)
                                 decHoursExercised += _cdecHoursPerDay
@@ -213,9 +205,6 @@ Public Class frmLifetimeExercise
                 Next
             ElseIf year = intCurrentYear AndAlso intCurrentYear > intBirthYear Then
                 For month As Integer = 1 To intBirthMonth
-                    If year Mod 4 = 0 AndAlso month = 2 Then
-                        decHoursExercised += _cdecHoursPerDay
-                    End If
                     If month < intBirthMonth Then
                         For day As Integer = 1 To intMonthDays(month - 1)
                             decHoursExercised += _cdecHoursPerDay
