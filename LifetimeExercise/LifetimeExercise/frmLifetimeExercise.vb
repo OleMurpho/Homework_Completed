@@ -243,9 +243,4 @@ Public Class frmLifetimeExercise
         lblDetails.ResetText()
         lblDetails.Visible = False
     End Sub
-
-    Private Sub Calculate()
-
-    End Sub
-
 End Class
