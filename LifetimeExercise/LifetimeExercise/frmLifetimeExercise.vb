@@ -1,6 +1,6 @@
 ﻿'Class: CPT-185 | Dr. Bothur
 'Student: Murphy M. Lopes
-'Date: 09/07/2021
+'Date: 09/08/2021
 'Description: [FINAL]
 '             *This program will accept input for the user's name, as well as
 '              a birth date and a current date. It will then calculate the estimated
@@ -24,13 +24,15 @@ Public Class frmLifetimeExercise
     Dim intCurrentMonth, intCurrentDate, intCurrentYear As Integer
     Dim dateBirthDate, dateCurrentDate As Date
 
-    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
-        Close()
-    End Sub
-
     Private Sub btnCalculate_Click(sender As Object, e As EventArgs) Handles btnCalculate.Click
         'Complete Form Check'
-        If txtName.TextLength = 0 Or txtBirthDD.TextLength = 0 Or txtBirthMM.TextLength = 0 Or txtBirthYYYY.TextLength = 0 Or txtCurrentDD.TextLength = 0 Or txtCurrentMM.TextLength = 0 Or txtCurrentYYYY.TextLength = 0 Then
+        If txtName.TextLength = 0 Or                                                'Check for name'
+            txtBirthDD.TextLength = 0 Or                                            'Check for birth date'
+            txtBirthMM.TextLength = 0 Or                                            'Check for birth month'
+            txtBirthYYYY.TextLength = 0 Or                                          'Check for birth year'
+            txtCurrentDD.TextLength = 0 Or                                          'Check for current date'
+            txtCurrentMM.TextLength = 0 Or                                          'Check for current month'
+            txtCurrentYYYY.TextLength = 0 Then                                      'Check for current year'
             MessageBox.Show("All Entries Are Required.", "Incomplete Form",
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
@@ -39,9 +41,13 @@ Public Class frmLifetimeExercise
         strNameInput = txtName.Text
 
         'Birth Year Instantiation'
-        If IsNumeric(txtBirthYYYY.Text) Then
-            If Integer.TryParse(txtBirthYYYY.Text, txtBirthYYYY.Text) AndAlso txtBirthYYYY.Text > 999 AndAlso txtBirthYYYY.Text < 10000 Then
+        If IsNumeric(txtBirthYYYY.Text) Then                                        'Check if numeric'
+            If Integer.TryParse(txtBirthYYYY.Text, txtBirthYYYY.Text) AndAlso       'Check if integer'
+                txtBirthYYYY.Text > 999 AndAlso txtBirthYYYY.Text < 10000 Then      'Check if 4 digits'
                 intBirthYear = txtBirthYYYY.Text
+                If intBirthYear Mod 4 = 0 Then                                      'Check for leap year*'
+                    intMonthDays(1) = 29                                                '*Set February to 29 days in intMonthDays array'
+                End If
             Else
                 MessageBox.Show("Invalid Entry.", "Invalid Entry",
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -54,9 +60,9 @@ Public Class frmLifetimeExercise
         End If
 
         'Birth Month Instantiation'
-        If IsNumeric(txtBirthMM.Text) Then
-            If Integer.TryParse(txtBirthMM.Text, txtBirthMM.Text) Then
-                If txtBirthMM.Text <= 12 AndAlso txtBirthMM.Text > 0 Then
+        If IsNumeric(txtBirthMM.Text) Then                                          'Check if numeric'
+            If Integer.TryParse(txtBirthMM.Text, txtBirthMM.Text) Then              'Check if integer'
+                If txtBirthMM.Text <= 12 AndAlso txtBirthMM.Text > 0 Then           'Check if birth month > 0 and <= 12'
                     intBirthMonth = txtBirthMM.Text
                 Else
                     MessageBox.Show("Invalid Entry.", "Invalid Entry",
@@ -75,9 +81,10 @@ Public Class frmLifetimeExercise
         End If
 
         'Birth Date Instantiation'
-        If IsNumeric(txtBirthDD.Text) Then
-            If Integer.TryParse(txtBirthDD.Text, txtBirthDD.Text) Then
-                If txtBirthDD.Text <= intMonthDays(intBirthMonth - 1) AndAlso txtBirthDD.Text > 0 Then
+        If IsNumeric(txtBirthDD.Text) Then                                          'Check if numeric'
+            If Integer.TryParse(txtBirthDD.Text, txtBirthDD.Text) Then              'Check if integer'
+                If txtBirthDD.Text <= intMonthDays(intBirthMonth - 1) AndAlso       'Check if birth date > 0 and <= intMonthDays(x)'
+                    txtBirthDD.Text > 0 Then
                     intBirthDate = txtBirthDD.Text
                 Else
                     MessageBox.Show("Invalid Entry", "Invalid Entry",
@@ -94,12 +101,16 @@ Public Class frmLifetimeExercise
                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
         End If
-
+        intMonthDays(1) = 28                                                        'Set February to 28 days in intMonthDays array'
         'Current Year Instantiation'
-        If IsNumeric(txtCurrentYYYY.Text) Then
-            If Integer.TryParse(txtCurrentYYYY.Text, txtCurrentYYYY.Text) Then
-                If txtCurrentYYYY.Text >= intBirthYear AndAlso txtCurrentYYYY.Text < 10000 Then
+        If IsNumeric(txtCurrentYYYY.Text) Then                                      'Check if numeric'
+            If Integer.TryParse(txtCurrentYYYY.Text, txtCurrentYYYY.Text) Then      'Check if integer'
+                If txtCurrentYYYY.Text >= intBirthYear AndAlso                      'Check if current year >= birth year'
+                    txtCurrentYYYY.Text < 10000 Then                                'Check if 4 digits'
                     intCurrentYear = txtCurrentYYYY.Text
+                    If intCurrentYear Mod 4 = 0 Then                                'Check for leap year*'
+                        intMonthDays(1) = 29                                            '*Set February to 29 days in intMonthDays array'
+                    End If
                 Else
                     MessageBox.Show("Invalid Entry.", "Invalid Entry",
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -117,18 +128,20 @@ Public Class frmLifetimeExercise
         End If
 
         'Current Month Instantiation'
-        If IsNumeric(txtCurrentMM.Text) Then
-            If Integer.TryParse(txtCurrentMM.Text, txtCurrentMM.Text) Then
-                If intCurrentYear = intBirthYear Then
-                    If txtCurrentMM.Text >= intBirthMonth AndAlso txtCurrentMM.Text <= 12 Then
+        If IsNumeric(txtCurrentMM.Text) Then                                        'Check if numeric'
+            If Integer.TryParse(txtCurrentMM.Text, txtCurrentMM.Text) Then          'Check if integer'
+                If intCurrentYear = intBirthYear Then                               'Check if current year = birth year*'
+                    If txtCurrentMM.Text >= intBirthMonth AndAlso                       '*Check if current month >= birth month'
+                        txtCurrentMM.Text <= 12 Then                                    '*Check if current month <= 12'
                         intCurrentMonth = txtCurrentMM.Text
                     Else
                         MessageBox.Show("Invalid Entry.", "Invalid Entry",
                                 MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                         Exit Sub
                     End If
-                ElseIf intCurrentYear > intBirthYear Then
-                    If txtCurrentMM.Text <= 12 AndAlso txtCurrentMM.Text > 0 Then
+                ElseIf intCurrentYear > intBirthYear Then                           'Check if current year > birth year*'
+                    If txtCurrentMM.Text <= 12 AndAlso                                  '*Check if current month <= 12'
+                        txtCurrentMM.Text > 0 Then                                      '*Check if current month > 0'
                         intCurrentMonth = txtCurrentMM.Text
                     Else
                         MessageBox.Show("Invalid Entry.", "Invalid Entry",
@@ -148,11 +161,12 @@ Public Class frmLifetimeExercise
         End If
 
         'Current Date Instantiation'
-        If IsNumeric(txtCurrentDD.Text) Then
-            If Integer.TryParse(txtCurrentDD.Text, txtCurrentDD.Text) Then
-                If intCurrentYear = intBirthYear Then
-                    If intCurrentMonth = intBirthMonth Then
-                        If txtCurrentDD.Text >= intBirthDate AndAlso txtCurrentDD.Text < intMonthDays(intCurrentMonth - 1) Then
+        If IsNumeric(txtCurrentDD.Text) Then                                        'Check if numeric'
+            If Integer.TryParse(txtCurrentDD.Text, txtCurrentDD.Text) Then          'Check if integer'
+                If intCurrentYear = intBirthYear Then                               'Check if current year = birth year*'
+                    If intCurrentMonth = intBirthMonth Then                             '*Check if current month = birth month**'
+                        If txtCurrentDD.Text >= intBirthDate AndAlso                        '**Check if current date >= birth date'
+                            txtCurrentDD.Text <= intMonthDays(intCurrentMonth - 1) Then      '**Check if current date <= max days for month'
                             intCurrentDate = txtCurrentDD.Text
                         Else
                             MessageBox.Show("Invalid Entry.", "Invalid Entry",
@@ -160,7 +174,8 @@ Public Class frmLifetimeExercise
                             Exit Sub
                         End If
                     Else
-                        If txtCurrentDD.Text <= intMonthDays(intCurrentMonth - 1) AndAlso txtCurrentDD.Text > 0 Then
+                        If txtCurrentDD.Text <= intMonthDays(intCurrentMonth - 1) AndAlso   '**Check if current date <= max days for month'
+                            txtCurrentDD.Text > 0 Then                                      '**Check if current date > 0'
                             intCurrentDate = txtCurrentDD.Text
                         Else
                             MessageBox.Show("Invalid Entry.", "Invalid Entry",
@@ -169,7 +184,8 @@ Public Class frmLifetimeExercise
                         End If
                     End If
                 Else
-                    If txtCurrentDD.Text <= intMonthDays(intCurrentMonth - 1) AndAlso txtCurrentDD.Text > 0 Then
+                    If txtCurrentDD.Text <= intMonthDays(intCurrentMonth - 1) AndAlso   '*Check if current date <= max days for month'
+                        txtCurrentDD.Text > 0 Then                                      '*Check if current date > 0'
                         intCurrentDate = txtCurrentDD.Text
                     Else
                         MessageBox.Show("Invalid Entry.", "Invalid Entry",
@@ -187,38 +203,52 @@ Public Class frmLifetimeExercise
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
         End If
-
+        intMonthDays(1) = 28                                                        'Set February to 28 days in intMonthDays array'
         'Convert Int to String'
-        If intBirthMonth < 10 Then
-            If intBirthDate < 10 Then
-                strBirthDate = "0" & intBirthMonth.ToString + "0" & intBirthDate.ToString + intBirthYear.ToString
+        If intBirthMonth < 10 Then                                                  'Check if birth month < 10*'
+            If intBirthDate < 10 Then                                                   '*Check if birth date < 10'
+                strBirthDate = "0" & intBirthMonth.ToString +                           '*Add zeros for parsing'
+                               "0" & intBirthDate.ToString +
+                               intBirthYear.ToString
             Else
-                strBirthDate = "0" & intBirthMonth.ToString + intBirthDate.ToString + intBirthYear.ToString
+                strBirthDate = "0" & intBirthMonth.ToString +
+                               intBirthDate.ToString +
+                               intBirthYear.ToString
             End If
         Else
-            strBirthDate = intBirthMonth.ToString + intBirthDate.ToString + intBirthYear.ToString
+            strBirthDate = intBirthMonth.ToString +
+                           intBirthDate.ToString +
+                           intBirthYear.ToString
         End If
 
-        If intCurrentMonth < 10 Then
-            If intCurrentDate < 10 Then
-                strCurrentDate = "0" & intCurrentMonth.ToString + "0" & intCurrentDate.ToString + intCurrentYear.ToString
+        If intCurrentMonth < 10 Then                                                'Check if current month < 10*'
+            If intCurrentDate < 10 Then                                                 '*Check if current date < 10'   
+                strCurrentDate = "0" & intCurrentMonth.ToString +                       '*Add zeros for parsing'
+                                 "0" & intCurrentDate.ToString +
+                                 intCurrentYear.ToString
             Else
-                strCurrentDate = "0" & intCurrentMonth.ToString + intCurrentDate.ToString + intCurrentYear.ToString
+                strCurrentDate = "0" & intCurrentMonth.ToString +
+                                 intCurrentDate.ToString +
+                                 intCurrentYear.ToString
             End If
         Else
-            strCurrentDate = intCurrentMonth.ToString + intCurrentDate.ToString + intCurrentYear.ToString
+            strCurrentDate = intCurrentMonth.ToString +
+                             intCurrentDate.ToString +
+                             intCurrentYear.ToString
         End If
 
         'Convert String to Date'
-        dateBirthDate = Date.ParseExact(strBirthDate, "MMddyyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo)
-        dateCurrentDate = Date.ParseExact(strCurrentDate, "MMddyyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo)
+        dateBirthDate = Date.ParseExact(strBirthDate, "MMddyyyy",                   'Parse converted birth date String to Date'
+                        System.Globalization.DateTimeFormatInfo.InvariantInfo)
+        dateCurrentDate = Date.ParseExact(strCurrentDate, "MMddyyyy",                'Parse converted current date String to Date'
+                          System.Globalization.DateTimeFormatInfo.InvariantInfo)
 
         'Calculate Hours'
-        Dim dayCount = DateDiff(DateInterval.Day, dateBirthDate, dateCurrentDate)
-        decHoursExercised = dayCount * _cdecHoursPerDay
+        Dim dayCount = DateDiff(DateInterval.Day, dateBirthDate, dateCurrentDate)   'Get total days between birth Date and current Date'
+        decHoursExercised = dayCount * _cdecHoursPerDay                             'total days * 0.428571 = decHoursExercised'
 
         'Display Output Message'
-        Dim temp As Decimal = Format(decHoursExercised, "0.00")
+        Dim temp As Decimal = Format(decHoursExercised, "0.00")                     'Format decHoursExercised to 2 decimal places'
         lblDetails.Text = txtName.Text & " has exercised for an estimated total of " &
                           temp & " hours in his/her lifetime."
         lblDetails.Visible = True
@@ -242,5 +272,9 @@ Public Class frmLifetimeExercise
         txtCurrentYYYY.Text = ""
         lblDetails.ResetText()
         lblDetails.Visible = False
+    End Sub
+
+    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
+        Close()
     End Sub
 End Class
