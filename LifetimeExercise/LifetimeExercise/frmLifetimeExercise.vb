@@ -22,6 +22,11 @@ Public Class frmLifetimeExercise
     Dim strNameInput, strBirthDate, strCurrentDate As String
     Dim intBirthMonth, intBirthDate, intBirthYear As Integer
     Dim intCurrentMonth, intCurrentDate, intCurrentYear As Integer
+
+    Private Sub frmLifetimeExercise_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
+
     Dim dateBirthDate, dateCurrentDate As Date
 
     Private Sub btnCalculate_Click(sender As Object, e As EventArgs) Handles btnCalculate.Click
